@@ -1,0 +1,16 @@
+# Данные — не коммитим
+dashboard/data/
+*.json
+*.log
+
+# Секреты
+.env
+config_local.py
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# PHP сессии
+/tmp/

@@ -1,0 +1,12 @@
+[Unit]
+Description=Telemt Firewall Watcher
+After=network.target telemt.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/telemt-bot/firewall_watcher.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

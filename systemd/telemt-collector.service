@@ -1,0 +1,12 @@
+[Unit]
+Description=Telemt Stats Collector
+After=network.target telemt.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/telemt-bot/collector.py
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

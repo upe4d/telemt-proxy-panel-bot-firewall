@@ -1,0 +1,12 @@
+[Unit]
+Description=Telemt Telegram Bot
+After=network.target telemt-collector.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/telemt-bot/bot.py
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
