@@ -7,8 +7,19 @@
 - 🔒 Защищённое управление с паролем
 
 ## Скриншоты
-
 > Dashboard, карта пользователей, блокировки, белый список
+
+<img width="1859" height="862" alt="image" src="https://github.com/user-attachments/assets/a52ddd7a-7cc6-4b5e-9ff8-e5e1aaa01b81" />
+<img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/5c7ab4ba-6a2e-4e8d-839a-06c9e061e49f" />
+<img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/834b238a-786c-4b61-89f6-67601328890e" />
+<img width="1856" height="779" alt="image" src="https://github.com/user-attachments/assets/d617f8de-e7b9-4ad4-ba45-01957c04e29a" />
+<img width="1284" height="700" alt="image" src="https://github.com/user-attachments/assets/d4272547-7c46-482e-a1e1-d6d1ca1d2f2a" />
+<img width="1593" height="530" alt="image" src="https://github.com/user-attachments/assets/91db2cdc-faa4-47c4-892a-81448c55f21d" />
+<img width="1842" height="722" alt="image" src="https://github.com/user-attachments/assets/23d84d1e-a42c-4dfc-aba7-20744d1435d4" />
+<img width="1660" height="795" alt="image" src="https://github.com/user-attachments/assets/587e4996-1369-427f-be91-9fcf6daff46a" />
+<img width="1802" height="788" alt="image" src="https://github.com/user-attachments/assets/af8875ae-6880-401c-8ea8-7000e0fb009a" />
+
+
 
 ## Компоненты
 
