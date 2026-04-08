@@ -5,6 +5,7 @@
 - 🤖 Telegram бот с уведомлениями и отчётами
 - 🛡️ Firewall с белым списком стран и IP
 - 🔒 Защищённое управление с паролем
+- 🏛️ Блокировка подсетей госорганов РФ (GOVIPS)
 
 ## Скриншоты
 > Dashboard, карта пользователей, блокировки, белый список
@@ -91,13 +92,10 @@ chown -R www-data:www-data /var/www/stats/data
 Настрой nginx — пример конфига:
 ```nginx
 server {
-    listen 443 ssl;
+    listen 4443;
     server_name stats.yourdomain.com;
     root /var/www/stats;
     index index.php;
-
-    ssl_certificate     /etc/letsencrypt/live/stats.yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/stats.yourdomain.com/privkey.pem;
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
@@ -125,6 +123,82 @@ chmod +x /opt/telemt-bot/fw_counters.sh
 crontab -e
 # Добавь строку:
 * * * * * /opt/telemt-bot/fw_counters.sh
+```
+
+## Маскировка IP пользователей (опционально)
+
+По умолчанию дашборд показывает полные IP пользователей в таблицах и на карте. Если дашборд публичный — рекомендуется маскировать IP до вида `95.79.xxx.xxx`.
+
+**Вариант 1 — показывать полные IP** (по умолчанию, ничего не менять)
+
+**Вариант 2 — маскировать IP** (рекомендуется для публичных дашбордов)
+
+Добавь функцию в начало `dashboard/index.php` после открывающего `<?php`:
+
+```php
+// Маскировка IP — показываем только первые два октета
+function mask_ip(string $ip): string {
+    if (empty($ip)) return '';
+    $parts = explode('.', $ip);
+    if (count($parts) === 4) {
+        return $parts[0] . '.' . $parts[1] . '.xxx.xxx';
+    }
+    return 'xxxx:xxxx:…'; // IPv6
+}
+```
+
+Затем замени вывод IP в трёх местах — вместо:
+```php
+<?= htmlspecialchars($ip_data['ip']??'') ?>
+```
+используй:
+```php
+<?= mask_ip($ip_data['ip']??'') ?>
+```
+
+И в `dashboard/modules/data.php` строку формирования точек карты:
+```php
+// было:
+$map_cities[$key]['ips'][] = $ip_data['ip'];
+// стало:
+$_ip = $ip_data['ip'];
+$_p = explode('.', $_ip);
+$map_cities[$key]['ips'][] = count($_p)===4 ? $_p[0].'.'.$_p[1].'.xxx.xxx' : 'xxxx:…';
+```
+
+## Блокировка подсетей госорганов РФ (GOVIPS)
+
+Дополнительный ipset для блокировки RST от подсетей Роскомнадзора, ФСБ, МВД и других госорганов.  
+Источник: [C24Be/AS_Network_List](https://github.com/C24Be/AS_Network_List) — ~1145 подсетей, обновляется ежедневно.
+
+```bash
+# Создать ipset и загрузить подсети
+ipset create GOVIPS hash:net maxelem 65536
+curl -s https://raw.githubusercontent.com/C24Be/AS_Network_List/main/blacklists_iptables/blacklist-v4.ipset \
+  | grep "^add blacklist-v4 " \
+  | sed 's/add blacklist-v4/add GOVIPS/' \
+  | while read line; do ipset $line 2>/dev/null; done
+
+# Добавить правило iptables
+iptables -N GOVBLOCK 2>/dev/null
+iptables -I INPUT 1 -j GOVBLOCK
+iptables -I GOVBLOCK -p tcp --tcp-flags RST RST -m set --match-set GOVIPS src -j DROP
+
+# Сохранить
+ipset save > /etc/ipset.conf && netfilter-persistent save
+
+# Скрипт автообновления (4:00 ежедневно)
+cat > /opt/update_govips.sh << 'EOF'
+#!/bin/bash
+URL="https://raw.githubusercontent.com/C24Be/AS_Network_List/main/blacklists_iptables/blacklist-v4.ipset"
+curl -s "$URL" | grep "^add blacklist-v4 " | sed 's/add blacklist-v4/add GOVIPS/' | while read line; do
+    ipset $line 2>/dev/null
+done
+ipset save > /etc/ipset.conf
+echo "[$(date '+%Y-%m-%d %H:%M:%S')] GOVIPS: $(ipset list GOVIPS | grep 'Number of entries' | awk '{print $NF}') записей"
+EOF
+chmod +x /opt/update_govips.sh
+(crontab -l 2>/dev/null; echo "0 4 * * * /opt/update_govips.sh >> /var/log/govips.log 2>&1") | crontab -
 ```
 
 ## Структура данных
@@ -155,6 +229,7 @@ crontab -e
 - 🚫 Анализ заблокированных IP (бот/пользователь)
 - 🛡️ Управление белым списком с паролем
 - 🔄 Авто-обновление каждые 5 минут
+- 🔒 Маскировка IP пользователей (опционально)
 
 ## Telegram бот — команды
 
@@ -179,9 +254,9 @@ crontab -e
 
 ## Стек технологий
 
-**Backend:** Python 3, PHP 8.3
-**Frontend:** Bootstrap 5, Chart.js, Leaflet.js
-**Firewall:** iptables, ip6tables, xt_geoip
+**Backend:** Python 3, PHP 8.3  
+**Frontend:** Bootstrap 5, Chart.js, Leaflet.js  
+**Firewall:** iptables, ip6tables, xt_geoip  
 **Сервер:** nginx, php-fpm, systemd
 
 ## Лицензия
@@ -191,3 +266,10 @@ MIT
 ## Автор
 
 [@upe4d](https://github.com/upe4d) — [t.me/u_pre](https://t.me/u_pre)
+
+## Связанные проекты
+
+- [tspublock](https://github.com/upe4d/tspublock) — RST Block List, GOVIPS блокировка
+- [telemt](https://github.com/telemt/telemt) — MTProxy сервер
+- [telemt_panel](https://github.com/amirotin/telemt_panel) — панель управления
+- [C24Be/AS_Network_List](https://github.com/C24Be/AS_Network_List) — подсети госорганов РФ
