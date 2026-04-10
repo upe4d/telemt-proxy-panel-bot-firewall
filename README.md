@@ -17,16 +17,8 @@
 <img width="3055" height="1712" alt="image" src="https://github.com/user-attachments/assets/3fb47046-8215-4660-a2ea-0e741ddd892b" />
 <img width="3072" height="1761" alt="image" src="https://github.com/user-attachments/assets/d7e4f066-d7c6-4677-8399-86cf46fe1102" />
 <img width="3067" height="1741" alt="image" src="https://github.com/user-attachments/assets/ceb6d467-5087-4aec-9c1d-7722e55780f5" />
-<img width="3110" height="1075" alt="image" src="https://github.com/user-attachments/assets/d4ffabdf-fa35-4981-aa18-279d035a04fa" />
 <img width="3064" height="1690" alt="image" src="https://github.com/user-attachments/assets/94f46f7c-71f8-4a47-8754-c1b9169cbaf4" />
-
-
-
-
-
-
-
-
+<img width="3110" height="1075" alt="image" src="https://github.com/user-attachments/assets/d4ffabdf-fa35-4981-aa18-279d035a04fa" />
 
 ## Структура проекта
 
