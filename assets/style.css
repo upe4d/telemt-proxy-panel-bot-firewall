@@ -1,0 +1,342 @@
+/**
+ * style.css — Главные стили дашборда Telemt MTProxy Stats
+ * @version 1.0.0
+ * @updated 2026-04-10
+ *
+ * CHANGELOG:
+ * v1.0.0 - Начальная версия, тёмно-синяя гамма, вкладочная навигация
+ */
+
+/* === ПЕРЕМЕННЫЕ === */
+:root {
+  --bg:       #0a1628;
+  --bg2:      #0f1e35;
+  --bg3:      #162440;
+  --bg4:      #1e3050;
+  --border:   #1e3050;
+  --border2:  #2a4060;
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --muted2:   #94a3b8;
+  --green:    #22c55e;
+  --blue:     #378ADD;
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --purple:   #a78bfa;
+  --font:     'JetBrains Mono', 'Courier New', monospace;
+}
+
+/* === СБРОС === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 13px;
+  min-height: 100vh;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* === LAYOUT === */
+.wrap { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+/* === TOPBAR === */
+.topbar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 11px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.topbar-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.topbar-meta a { color: var(--muted); }
+.topbar-meta a:hover { color: var(--text); }
+.badge-live {
+  background: #052e16;
+  color: var(--green);
+  border: 1px solid #166534;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+}
+.btn-refresh {
+  background: none;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all .15s;
+}
+.btn-refresh:hover { color: var(--text); border-color: var(--blue); }
+
+/* === НАВИГАЦИЯ ВКЛАДОК === */
+.tabs-nav {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 0;
+  padding: 0 20px;
+  overflow-x: auto;
+}
+.tabs-nav::-webkit-scrollbar { height: 2px; }
+.tabs-nav::-webkit-scrollbar-thumb { background: var(--border2); }
+.tab-btn {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-family: var(--font);
+  white-space: nowrap;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab-btn:hover { color: var(--muted2); }
+.tab-btn.active {
+  color: var(--text);
+  border-bottom-color: var(--blue);
+}
+.tab-icon { font-size: 14px; }
+
+/* === КОНТЕНТ ВКЛАДОК === */
+.tab-content { padding: 16px 20px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* === КАРТОЧКИ === */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.card-hdr {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-hdr-right { font-size: 10px; color: var(--muted); }
+
+/* === МЕТРИКИ === */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+@media (max-width: 900px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.metric {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+.metric-lbl { font-size: 10px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-val { font-size: 22px; font-weight: 700; line-height: 1; }
+.metric-sub { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.c-green  { color: var(--green); }
+.c-blue   { color: var(--blue); }
+.c-amber  { color: var(--amber); }
+.c-red    { color: var(--red); }
+.c-purple { color: var(--purple); }
+.c-muted  { color: var(--muted); }
+
+/* === ГРИДЫ === */
+.grid-2 { display: grid; grid-template-columns: 1fr 340px; gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.grid-2-eq { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-2-eq, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* === СПИСКИ === */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+.list-item:last-child { border-bottom: none; }
+.list-main { font-size: 12px; color: var(--text); }
+.list-sub  { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.list-val  { font-size: 12px; font-weight: 700; white-space: nowrap; }
+
+/* === ПРОГРЕСС БАРЫ === */
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.bar-lbl { font-size: 10px; color: var(--muted); width: 70px; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 5px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.bar-fill  { height: 100%; border-radius: 3px; transition: width .3s; }
+.bar-val   { font-size: 10px; color: var(--text); width: 40px; text-align: right; flex-shrink: 0; }
+
+/* === СПАРКЛАЙН === */
+.spark { display: flex; align-items: flex-end; gap: 2px; height: 36px; }
+.spark-bar { flex: 1; border-radius: 2px 2px 0 0; opacity: 0.8; transition: opacity .15s; }
+.spark-bar:hover { opacity: 1; }
+.spark-blue   { background: var(--blue); }
+.spark-green  { background: var(--green); }
+.spark-amber  { background: var(--amber); }
+.spark-red    { background: var(--red); }
+
+/* === БЕЙДЖИ === */
+.badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge-ok    { background: #052e16; color: var(--green); border: 1px solid #166534; }
+.badge-warn  { background: #1c1000; color: var(--amber); border: 1px solid #854f0b; }
+.badge-err   { background: #1c0000; color: var(--red);   border: 1px solid #7f1d1d; }
+.badge-info  { background: #0c2a4a; color: var(--blue);  border: 1px solid #185FA5; }
+
+/* === ТАБЛИЦЫ === */
+.tbl { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tbl th { font-size: 10px; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
+.tbl td { padding: 7px 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--bg3); }
+
+/* === КАРТА === */
+#map { height: 320px; border-radius: 8px; overflow: hidden; }
+
+/* === СТРАНЫ === */
+.countries-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.country-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg3);
+  border-radius: 7px;
+}
+.country-flag  { font-size: 14px; width: 20px; flex-shrink: 0; }
+.country-name  { font-size: 11px; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.country-bar   { flex: 1; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.country-fill  { height: 100%; border-radius: 2px; background: var(--blue); }
+.country-cnt   { font-size: 11px; color: var(--muted); min-width: 30px; text-align: right; }
+
+/* === СИСТЕМА === */
+.sys-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.sys-row:last-child { margin-bottom: 0; }
+.sys-lbl { font-size: 11px; color: var(--muted); }
+.sys-right { display: flex; align-items: center; gap: 8px; }
+.sys-bar { width: 90px; height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.sys-fill { height: 100%; border-radius: 2px; }
+.sys-val { font-size: 11px; font-weight: 700; color: var(--text); width: 36px; text-align: right; }
+
+/* === БЕЛЫЙ СПИСОК === */
+.wl-input {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-family: var(--font);
+  font-size: 12px;
+  width: 100%;
+  outline: none;
+}
+.wl-input:focus { border-color: var(--blue); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  transition: all .15s;
+}
+.btn:hover { color: var(--text); border-color: var(--blue); }
+.btn-blue { background: #0c2a4a; border-color: #185FA5; color: var(--blue); }
+.btn-blue:hover { background: #185FA5; color: #fff; }
+.btn-red  { background: #1c0000; border-color: #7f1d1d; color: var(--red); }
+.btn-red:hover  { background: #7f1d1d; color: #fff; }
+
+/* === LOADING === */
+.loading { text-align: center; padding: 40px; color: var(--muted); font-size: 12px; }
+.loading::after { content: '...'; animation: dots 1s infinite; }
+@keyframes dots { 0%{content:'.'} 33%{content:'..'} 66%{content:'...'} }
+
+/* === ТОСТ === */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  padding: 9px 18px;
+  border-radius: 9px;
+  font-size: 12px;
+  z-index: 9999;
+  transition: all .3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* === ФУТЕР === */
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+  margin-top: 30px;
+}
+
+/* === СКРОЛЛ ПРИНУДИТЕЛЬНЫЙ === */
+div[style*="overflow-y:auto"]::-webkit-scrollbar,
+div[style*="overflow-y: auto"]::-webkit-scrollbar { width: 3px !important; }
+div[style*="overflow-y:auto"]::-webkit-scrollbar-track,
+div[style*="overflow-y: auto"]::-webkit-scrollbar-track { background: transparent !important; }
+div[style*="overflow-y:auto"]::-webkit-scrollbar-thumb,
+div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb { background: #2a4060 !important; border-radius: 2px !important; }
