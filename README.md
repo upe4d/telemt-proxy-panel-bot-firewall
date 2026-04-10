@@ -10,7 +10,7 @@
 ## Скриншоты
 > Dashboard, карта пользователей, блокировки, белый список
 
-<img width="1859" height="862" alt="image" src="https://github.com/user-attachments/assets/a52ddd7a-7cc6-4b5e-9ff8-e5e1aaa01b81" />
+
 <img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/5c7ab4ba-6a2e-4e8d-839a-06c9e061e49f" />
 <img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/834b238a-786c-4b61-89f6-67601328890e" />
 <img width="1856" height="779" alt="image" src="https://github.com/user-attachments/assets/d617f8de-e7b9-4ad4-ba45-01957c04e29a" />
