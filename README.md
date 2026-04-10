@@ -1,193 +1,206 @@
-# Telemt MTProxy — Panel, Bot & Firewall
+# Telemt MTProxy — Dashboard, Bot & Firewall
 
 Полный стек для управления MTProxy сервером на базе [Telemt](https://github.com/telemt/telemt):
-- 📊 Веб-дашборд со статистикой, картой, GeoIP
+
+- 📊 Веб-дашборд v2.0 — вкладочная навигация, тёмно-синяя гамма, 7 разделов
+- 🛡️ Защита от ТСПУ — TSPUBLOCK (CyberOK) + GOVIPS (госорганы РФ) с аналитикой
 - 🤖 Telegram бот с уведомлениями и отчётами
-- 🛡️ Firewall с белым списком стран и IP
-- 🔒 Защищённое управление с паролем
-- 🏛️ Блокировка подсетей госорганов РФ (GOVIPS)
+- 🔒 GeoIP фильтрация с белым списком стран и IP
+- 🗺️ Карта активных пользователей в реальном времени
 
 ## Скриншоты
-> Dashboard, карта пользователей, блокировки, белый список
 
+> Обзор, Карта, Защита, Страны, Пользователи, История, Фильтрация
 
 <img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/5c7ab4ba-6a2e-4e8d-839a-06c9e061e49f" />
 <img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/834b238a-786c-4b61-89f6-67601328890e" />
 <img width="1856" height="779" alt="image" src="https://github.com/user-attachments/assets/d617f8de-e7b9-4ad4-ba45-01957c04e29a" />
 <img width="1284" height="700" alt="image" src="https://github.com/user-attachments/assets/d4272547-7c46-482e-a1e1-d6d1ca1d2f2a" />
-<img width="1593" height="530" alt="image" src="https://github.com/user-attachments/assets/91db2cdc-faa4-47c4-892a-81448c55f21d" />
-<img width="1842" height="722" alt="image" src="https://github.com/user-attachments/assets/23d84d1e-a42c-4dfc-aba7-20744d1435d4" />
-<img width="1660" height="795" alt="image" src="https://github.com/user-attachments/assets/587e4996-1369-427f-be91-9fcf6daff46a" />
-<img width="1802" height="788" alt="image" src="https://github.com/user-attachments/assets/af8875ae-6880-401c-8ea8-7000e0fb009a" />
 
+## Структура проекта
 
-
-## Компоненты
-
-| Компонент | Описание |
-|-----------|----------|
-| `bot/collector.py` | Сбор статистики каждые 5 минут |
-| `bot/bot.py` | Telegram бот — дайджест, логи, бэкап |
-| `bot/firewall.py` | Управление iptables GeoIP блокировками |
-| `bot/firewall_watcher.py` | Следит за whitelist.json и применяет правила |
-| `bot/fw_counters.sh` | Счётчики блокировок для дашборда |
-| `dashboard/` | PHP дашборд на Bootstrap 5 + Chart.js + Leaflet |
+```
+telemt-proxy-panel-bot-firewall/
+├── index.php                  # Главная страница — шапка, навигация
+├── config.php                 # Настройки сайта и пути к файлам данных
+├── assets/
+│   ├── style.css              # Тёмно-синяя гамма, CSS переменные, кастомный скролл
+│   └── app.js                 # AJAX навигация по вкладкам без перезагрузки
+├── tabs/
+│   ├── overview.php           # Обзор — метрики, мини-карта, защита, топ стран
+│   ├── map.php                # Карта — полноэкранная с фильтром по странам
+│   ├── protection.php         # Защита — TSPUBLOCK + GOVIPS аналитика
+│   ├── countries.php          # Страны — таблица, топ городов, трафик
+│   ├── users.php              # Пользователи — история IP, новые vs повторные
+│   ├── history.php            # История — графики по дням и часам
+│   └── whitelist.php          # Фильтрация — GeoIP белый список
+├── modules/
+│   └── whitelist.php          # Модуль управления белым списком
+└── bot/
+    ├── collector.py           # Сбор статистики каждые 10 минут
+    ├── bot.py                 # Telegram бот
+    ├── firewall.py            # Управление iptables GeoIP блокировками
+    ├── firewall_watcher.py    # Следит за whitelist.json и применяет правила
+    ├── fw_counters.sh         # Счётчики TSPUBLOCK/GOVBLOCK для дашборда
+    ├── fw_analyze.py          # Парсинг kern.log — аналитика блокировок
+    └── modules/
+        ├── api.py             # GeoIP через ip-api.com (батч 100 IP)
+        ├── stats.py           # Сбор и сохранение статистики
+        ├── storage.py         # Работа с JSON файлами
+        ├── geo.py             # Обогащение IP координатами
+        └── system.py         # CPU, RAM, диск, логи
+```
 
 ## Требования
 
 - Ubuntu 20.04+ / Debian 11+
-- Python 3.10+
-- PHP 8.1+ с mbstring
+- Python 3.10+ с пакетами: `requests`, `urllib3`
+- PHP 8.1+ с расширением `mbstring`
 - nginx + php-fpm
-- iptables + xtables-addons (для GeoIP блокировок)
+- iptables + ipset
 - Установленный и работающий [Telemt](https://github.com/telemt/telemt)
-
 
 ## Установка
 
 ### 1. Клонируй репозиторий
+
 ```bash
 git clone https://github.com/upe4d/telemt-proxy-panel-bot-firewall.git
 cd telemt-proxy-panel-bot-firewall
 ```
 
-### 2. Настрой конфигурацию
-```bash
-cp .env.example .env
-nano .env
-```
+### 2. Установи зависимости Python
 
-Заполни все переменные в `.env`.
-
-### 3. Установи зависимости Python
 ```bash
 pip install requests urllib3 --break-system-packages
 ```
 
-### 4. Скопируй файлы бота
+### 3. Скопируй файлы бота
+
 ```bash
-mkdir -p /opt/telemt-bot
+mkdir -p /opt/telemt-bot/modules
 cp -r bot/* /opt/telemt-bot/
-cp -r bot/modules /opt/telemt-bot/
 ```
 
-### 5. Настрой конфиг бота
+### 4. Настрой config.py
 
-Отредактируй `/opt/telemt-bot/config.py` — вставь свои значения из `.env`.
+Отредактируй `/opt/telemt-bot/config.py` — вставь токен Telemt API, домен, интервал сбора:
 
-### 6. Установи systemd сервисы
+```python
+TELEMT_API    = "http://127.0.0.1:9091"
+TELEMT_TOKEN  = "YOUR_BEARER_TOKEN"
+SITE_DOMAIN   = "stats.yourdomain.com"
+INTERVAL      = 600   # секунд между сборами
+MAX_IPS       = 10000 # максимум IP в истории
+```
+
+### 5. Установи systemd сервисы
+
 ```bash
 cp systemd/*.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now telemt-collector telemt-bot telemt-firewall
+systemctl enable --now telemt-collector telemt-firewall
 ```
 
-### 7. Настрой веб-дашборд
+### 6. Настрой веб-дашборд
+
 ```bash
-mkdir -p /var/www/stats
-cp -r dashboard/* /var/www/stats/
+mkdir -p /var/www/stats/data /var/www/stats/assets /var/www/stats/tabs /var/www/stats/modules
+cp index.php config.php /var/www/stats/
+cp assets/* /var/www/stats/assets/
+cp tabs/* /var/www/stats/tabs/
+cp modules/* /var/www/stats/modules/
 chown -R www-data:www-data /var/www/stats/data
+chmod 755 /var/www/stats/data
 ```
 
-Настрой nginx — пример конфига:
+### 7. Настрой nginx
+
 ```nginx
 server {
-    listen 4443;
+    listen 4443 ssl;
     server_name stats.yourdomain.com;
     root /var/www/stats;
     index index.php;
+
+    ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
 
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
     }
 
-    location /data/ { deny all; }
+    location /data/ {
+        location ~* \.json$ { allow all; }
+        deny all;
+    }
 }
 ```
 
-### 8. GeoIP блокировки (опционально)
+### 8. Крон задачи
+
 ```bash
-apt install xtables-addons-common libtext-csv-xs-perl -y
-modprobe xt_geoip
-cd /tmp
-wget "https://download.db-ip.com/free/dbip-country-lite-$(date +%Y-%m).csv.gz"
-gunzip dbip-country-lite-*.csv.gz
-mv dbip-country-lite-*.csv dbip-country-lite.csv
-/usr/libexec/xtables-addons/xt_geoip_build -D /usr/share/xt_geoip dbip-country-lite.csv
+crontab -e
 ```
 
-### 9. Счётчики firewall (cron)
-```bash
-chmod +x /opt/telemt-bot/fw_counters.sh
-crontab -e
-# Добавь строку:
+```cron
+# Сбор статистики GeoIP коллектором (systemd)
+# Аналитика блокировок
+*/10 * * * * python3 /opt/telemt-bot/fw_analyze.py >> /var/log/fw_analyze.log 2>&1
+# Обновление CyberOK Skipa
+0 3 * * * curl -fsSL https://stats.gptru.pro:4443/rst/update_cyberok.sh | bash >> /var/log/cyberok_update.log 2>&1
+# Обновление GOVIPS
+0 4 * * * /opt/update_govips.sh >> /var/log/govips.log 2>&1
+# Счётчики firewall
 * * * * * /opt/telemt-bot/fw_counters.sh
 ```
 
-## Маскировка IP пользователей (опционально)
+## Защита от ТСПУ
 
-По умолчанию дашборд показывает полные IP пользователей в таблицах и на карте. Если дашборд публичный — рекомендуется маскировать IP до вида `95.79.xxx.xxx`.
+### TSPUBLOCK — CyberOK Skipa
 
-**Вариант 1 — показывать полные IP** (по умолчанию, ничего не менять)
+Задокументированный список IP сканеров ТСПУ от независимых исследователей (ГРЧЦ, НКЦКИ).
+Источник: [tread-lightly/CyberOK_Skipa_ips](https://github.com/tread-lightly/CyberOK_Skipa_ips) — ~145 IP, обновляется ежедневно.
 
-**Вариант 2 — маскировать IP** (рекомендуется для публичных дашбордов)
+```bash
+# Создать ipset
+ipset create TSPUIPS hash:net maxelem 65536
 
-Добавь функцию в начало `dashboard/index.php` после открывающего `<?php`:
+# Добавить цепочку iptables
+iptables -N TSPUBLOCK
+iptables -I INPUT 1 -j TSPUBLOCK
+iptables -I TSPUBLOCK -p tcp --tcp-flags RST RST -m set --match-set TSPUIPS src -j DROP
 
-```php
-// Маскировка IP — показываем только первые два октета
-function mask_ip(string $ip): string {
-    if (empty($ip)) return '';
-    $parts = explode('.', $ip);
-    if (count($parts) === 4) {
-        return $parts[0] . '.' . $parts[1] . '.xxx.xxx';
-    }
-    return 'xxxx:xxxx:…'; // IPv6
-}
+# Включить логирование для аналитики
+iptables -I TSPUBLOCK 1 -p tcp --tcp-flags RST RST \
+  -m set --match-set TSPUIPS src \
+  -j LOG --log-prefix "TSPUBLOCK: " --log-level 4
+
+# Автообновление (скрипт update_cyberok.sh)
+0 3 * * * curl -fsSL https://stats.gptru.pro:4443/rst/update_cyberok.sh | bash
 ```
 
-Затем замени вывод IP в трёх местах — вместо:
-```php
-<?= htmlspecialchars($ip_data['ip']??'') ?>
-```
-используй:
-```php
-<?= mask_ip($ip_data['ip']??'') ?>
-```
+### GOVIPS — Подсети госорганов РФ
 
-И в `dashboard/modules/data.php` строку формирования точек карты:
-```php
-// было:
-$map_cities[$key]['ips'][] = $ip_data['ip'];
-// стало:
-$_ip = $ip_data['ip'];
-$_p = explode('.', $_ip);
-$map_cities[$key]['ips'][] = count($_p)===4 ? $_p[0].'.'.$_p[1].'.xxx.xxx' : 'xxxx:…';
-```
-
-## Блокировка подсетей госорганов РФ (GOVIPS)
-
-Дополнительный ipset для блокировки RST от подсетей Роскомнадзора, ФСБ, МВД и других госорганов.  
+Подсети Роскомнадзора, ФСБ, МВД, ГРЧЦ и других госорганов.
 Источник: [C24Be/AS_Network_List](https://github.com/C24Be/AS_Network_List) — ~1145 подсетей, обновляется ежедневно.
 
 ```bash
-# Создать ipset и загрузить подсети
+# Создать ipset
 ipset create GOVIPS hash:net maxelem 65536
-curl -s https://raw.githubusercontent.com/C24Be/AS_Network_List/main/blacklists_iptables/blacklist-v4.ipset \
-  | grep "^add blacklist-v4 " \
-  | sed 's/add blacklist-v4/add GOVIPS/' \
-  | while read line; do ipset $line 2>/dev/null; done
 
-# Добавить правило iptables
-iptables -N GOVBLOCK 2>/dev/null
+# Добавить цепочку iptables
+iptables -N GOVBLOCK
 iptables -I INPUT 1 -j GOVBLOCK
 iptables -I GOVBLOCK -p tcp --tcp-flags RST RST -m set --match-set GOVIPS src -j DROP
 
-# Сохранить
-ipset save > /etc/ipset.conf && netfilter-persistent save
+# Включить логирование для аналитики
+iptables -I GOVBLOCK 1 -p tcp --tcp-flags RST RST \
+  -m set --match-set GOVIPS src \
+  -j LOG --log-prefix "GOVBLOCK: " --log-level 4
 
-# Скрипт автообновления (4:00 ежедневно)
+# Скрипт автообновления
 cat > /opt/update_govips.sh << 'EOF'
 #!/bin/bash
 URL="https://raw.githubusercontent.com/C24Be/AS_Network_List/main/blacklists_iptables/blacklist-v4.ipset"
@@ -198,38 +211,99 @@ ipset save > /etc/ipset.conf
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] GOVIPS: $(ipset list GOVIPS | grep 'Number of entries' | awk '{print $NF}') записей"
 EOF
 chmod +x /opt/update_govips.sh
-(crontab -l 2>/dev/null; echo "0 4 * * * /opt/update_govips.sh >> /var/log/govips.log 2>&1") | crontab -
+```
+
+### Аналитика блокировок (fw_analyze.py)
+
+Парсит kern.log и собирает в `data/fw_stats.json`:
+- Количество задропанных пакетов и байт по каждой цепочке
+- Топ IP источников RST
+- Активность по часам суток (спарклайн)
+
+```bash
+# Запуск вручную
+python3 /opt/telemt-bot/fw_analyze.py
+
+# Крон каждые 10 минут
+*/10 * * * * python3 /opt/telemt-bot/fw_analyze.py >> /var/log/fw_analyze.log 2>&1
+```
+
+## Маскировка IP пользователей
+
+Для публичных дашбордов IP маскируются до вида `95.79.xxx.xxx` — реализовано в `app.js` и `tabs/*.php`.
+
+## Сохранение правил iptables
+
+```bash
+# Сохранить ipset
+ipset save > /etc/ipset.conf
+
+# Сохранить iptables
+netfilter-persistent save
+# или
+iptables-save > /etc/iptables/rules.v4
 ```
 
 ## Структура данных
+
 ```
 /var/www/stats/data/
-├── current.json        # Текущая статистика
-├── history.json        # История по дням (30 дней)
-├── hours.json          # Активность по часам
-├── countries.json      # Статистика по странам
-├── cities.json         # Статистика по городам
-├── ips.json            # История IP адресов
-├── users.json          # Статистика пользователей
-├── blocked.json        # Заблокированные IP с анализом
-├── whitelist.json      # Белый список стран и IP
-├── fw_counters.json    # Счётчики firewall
-├── city_coords.json    # Координаты городов (кэш)
-├── country_traffic.json # Трафик по странам
-└── new_vs_repeat.json  # Новые vs повторные IP
+├── current.json         # Текущая статистика (подключения, IP, трафик, CPU/RAM)
+├── history.json         # История по дням (до 30 дней)
+├── hours.json           # Активность по часам суток
+├── countries.json       # Статистика по странам
+├── cities.json          # Статистика по городам
+├── city_coords.json     # Координаты городов (кэш GeoIP)
+├── ips.json             # История IP адресов с геолокацией
+├── users.json           # Статистика пользователей telemt
+├── new_vs_repeat.json   # Новые vs повторные IP за сегодня
+├── new_by_day.json      # Новые IP по дням
+├── country_traffic.json # Косвенный трафик по странам
+├── whitelist.json       # Белый список стран и IP для GeoIP фильтра
+└── fw_stats.json        # Статистика TSPUBLOCK/GOVBLOCK (fw_analyze.py)
 ```
 
-## Возможности дашборда
+## Возможности дашборда v2.0
 
-- 📈 Графики подключений, трафика, активных IP по дням
-- 🗺️ Карта активных пользователей (Leaflet.js)
-- 🌍 Статистика по странам и городам с флагами
-- 👥 Новые vs повторные пользователи
-- 📦 Трафик по странам (косвенный)
-- 🚫 Анализ заблокированных IP (бот/пользователь)
-- 🛡️ Управление белым списком с паролем
-- 🔄 Авто-обновление каждые 5 минут
-- 🔒 Маскировка IP пользователей (опционально)
+### Обзор
+- Ключевые метрики: подключения, активные IP, трафик, RST задропано, uptime
+- Мини-карта активных пользователей
+- Блок защиты TSPUBLOCK + GOVIPS с реальными счётчиками
+- Топ стран с прогресс-барами
+- Состояние системы: CPU, RAM, диск, логи
+
+### Карта
+- Полноэкранная интерактивная карта (Leaflet.js)
+- Фильтр по стране — автозум на выбранную страну
+- Маскировка IP в попапах
+
+### Защита
+- TSPUBLOCK и GOVIPS — пакеты, трафик, IP в списке
+- Спарклайн активности по 24 часам
+- Топ источников RST (из kern.log логирования)
+- Информация об источниках списков
+
+### Страны
+- Таблица всех стран с поиском и скроллом
+- Топ городов с прогресс-барами
+- Косвенный трафик по странам
+- Пояснение методологии расчёта
+
+### Пользователи
+- Таблица пользователей telemt с трафиком
+- Новые vs повторные IP сегодня
+- Топ IP по сессиям с геолокацией и датами
+
+### История
+- Графики подключений и трафика по дням (Chart.js)
+- График активности по часам суток
+- Таблица истории за все дни
+
+### Фильтрация
+- Включение/выключение GeoIP фильтра
+- Добавление/удаление стран из белого списка
+- Добавление персональных IP
+- Защита паролем
 
 ## Telegram бот — команды
 
@@ -241,22 +315,25 @@ chmod +x /opt/update_govips.sh
 | `/backup` | Бэкап конфига telemt |
 | `/digest` | Дайджест за сегодня |
 
-## Firewall
+## TCP Keepalive (рекомендуется)
 
-Блокировка работает через `iptables` + `xt_geoip`.
-Управление через веб-интерфейс дашборда (требует пароль).
+Уменьшает время жизни залипших соединений до ~13 минут:
 
-Поддерживаемые действия:
-- Включить/выключить фильтрацию
-- Добавить/удалить разрешённые страны
-- Добавить/удалить разрешённые IP (IPv4 и IPv6)
-- Просмотр заблокированных IP с GeoIP и анализом
+```bash
+sysctl -w net.ipv4.tcp_keepalive_time=600
+sysctl -w net.ipv4.tcp_keepalive_intvl=60
+sysctl -w net.ipv4.tcp_keepalive_probes=3
+echo "net.ipv4.tcp_keepalive_time=600" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_keepalive_intvl=60" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_keepalive_probes=3" >> /etc/sysctl.conf
+```
 
 ## Стек технологий
 
 **Backend:** Python 3, PHP 8.3  
-**Frontend:** Bootstrap 5, Chart.js, Leaflet.js  
-**Firewall:** iptables, ip6tables, xt_geoip  
+**Frontend:** HTML, CSS (тёмно-синяя гамма), vanilla JS, Chart.js, Leaflet.js  
+**GeoIP:** ip-api.com (батч до 100 IP за запрос)  
+**Firewall:** iptables, ipset  
 **Сервер:** nginx, php-fpm, systemd
 
 ## Лицензия
@@ -265,11 +342,13 @@ MIT
 
 ## Автор
 
-[@upe4d](https://github.com/upe4d) — [t.me/u_pre](https://t.me/u_pre)
+[@upe4d](https://github.com/upe4d) — [t.me/u_pre](https://t.me/u_pre)  
+Канал поддержки: [t.me/telemtrs](https://t.me/telemtrs)
 
 ## Связанные проекты
 
-- [tspublock](https://github.com/upe4d/tspublock) — RST Block List, GOVIPS блокировка
-- [telemt](https://github.com/telemt/telemt) — MTProxy сервер
-- [telemt_panel](https://github.com/amirotin/telemt_panel) — панель управления
+- [tspublock](https://github.com/upe4d/tspublock) — RST Block List, исследование ТСПУ
+- [telemt](https://github.com/telemt/telemt) — MTProxy сервер на Rust
+- [telemt_panel](https://github.com/amirotin/telemt_panel) — официальная панель управления
+- [CyberOK_Skipa_ips](https://github.com/tread-lightly/CyberOK_Skipa_ips) — список сканеров ТСПУ
 - [C24Be/AS_Network_List](https://github.com/C24Be/AS_Network_List) — подсети госорганов РФ
