@@ -12,10 +12,21 @@
 
 > Обзор, Карта, Защита, Страны, Пользователи, История, Фильтрация
 
-<img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/5c7ab4ba-6a2e-4e8d-839a-06c9e061e49f" />
-<img width="1840" height="876" alt="image" src="https://github.com/user-attachments/assets/834b238a-786c-4b61-89f6-67601328890e" />
-<img width="1856" height="779" alt="image" src="https://github.com/user-attachments/assets/d617f8de-e7b9-4ad4-ba45-01957c04e29a" />
-<img width="1284" height="700" alt="image" src="https://github.com/user-attachments/assets/d4272547-7c46-482e-a1e1-d6d1ca1d2f2a" />
+<img width="3081" height="1436" alt="image" src="https://github.com/user-attachments/assets/c44c4824-399a-4882-9b87-c43451e40a1e" />
+<img width="3093" height="1452" alt="image" src="https://github.com/user-attachments/assets/d4d4b4d7-f2f5-47b1-9261-eec3b50cbd75" />
+<img width="3055" height="1712" alt="image" src="https://github.com/user-attachments/assets/3fb47046-8215-4660-a2ea-0e741ddd892b" />
+<img width="3072" height="1761" alt="image" src="https://github.com/user-attachments/assets/d7e4f066-d7c6-4677-8399-86cf46fe1102" />
+<img width="3067" height="1741" alt="image" src="https://github.com/user-attachments/assets/ceb6d467-5087-4aec-9c1d-7722e55780f5" />
+<img width="3110" height="1075" alt="image" src="https://github.com/user-attachments/assets/d4ffabdf-fa35-4981-aa18-279d035a04fa" />
+<img width="3064" height="1690" alt="image" src="https://github.com/user-attachments/assets/94f46f7c-71f8-4a47-8754-c1b9169cbaf4" />
+
+
+
+
+
+
+
+
 
 ## Структура проекта
 
