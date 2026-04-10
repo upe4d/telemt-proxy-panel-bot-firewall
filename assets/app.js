@@ -38,7 +38,7 @@ function loadTab(tab) {
     const content = document.getElementById('tab-content');
 
     // Если вкладка уже загружена — показываем из кэша (protection всегда свежая)
-    const noCache = ['protection', 'map', 'history', 'users'];
+    const noCache = ['protection', 'map', 'history', 'users', 'overview'];
     if (tabCache[tab] && !noCache.includes(tab)) {
         content.innerHTML = tabCache[tab];
         initTabScripts(tab);
@@ -68,7 +68,7 @@ function loadTab(tab) {
 
 /* === ИНИЦИАЛИЗАЦИЯ СКРИПТОВ ВКЛАДКИ === */
 function initTabScripts(tab) {
-    if (tab === 'overview') { initOverview(); setTimeout(initMap, 300); }
+    if (tab === 'overview') { mapInstance = null; initOverview(); setTimeout(initMap, 300); }
     if (tab === 'map') { /* карта инициализируется в map.php */ }
     if (tab === 'protection') initProtection();
     if (tab === 'countries') initCountries();
