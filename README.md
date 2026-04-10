@@ -41,7 +41,7 @@
 - nginx + php-fpm
 - iptables + xtables-addons (для GeoIP блокировок)
 - Установленный и работающий [Telemt](https://github.com/telemt/telemt)
-- [Telemt Panel](https://github.com/amirotin/telemt_panel)
+
 
 ## Установка
 
