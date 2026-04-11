@@ -21,6 +21,6 @@ define('FILE_WHITELIST',       DATA_DIR . '/whitelist.json');
 define('FILE_FW',             DATA_DIR . '/fw_stats.json');
 
 // Настройки сайта
-define('SITE_DOMAIN',  'pl.gptru.pro');
-define('SITE_CHANNEL', '@u_pre');
-define('PANEL_URL',    'http://95.85.255.210:8443');
+define('SITE_DOMAIN',  '_');
+define('SITE_CHANNEL', '_');
+define('PANEL_URL',    'http://ваш_ip:8443');
