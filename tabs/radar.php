@@ -10,14 +10,14 @@
  */
 $proxies = [
   'se' => [
-    'flag' => '🇸🇪', 'name' => 'Швеция', 'domain' => 'tg.gptru.pro',
-    'ee' => 'tg://proxy?server=tg.gptru.pro&port=443&secret=ee6c0fc115f28307e3510041fffcaef3bc67707472752e70726f',
-    'dd' => 'tg://proxy?server=tg.gptru.pro&port=443&secret=dd6c0fc115f28307e3510041fffcaef3bc',
+    'flag' => '🇸🇪', 'name' => 'Страна', 'domain' => 'домен',
+    'ee' => 'tg://proxy?server=',
+    'dd' => 'tg://proxy?server=',
   ],
   'pl' => [
-    'flag' => '🇵🇱', 'name' => 'Польша', 'domain' => 'pl.gptru.pro',
-    'ee' => 'tg://proxy?server=pl.gptru.pro&port=443&secret=ee20b1dfaf8512ed32a1048a55094b000e766b2e636f6d',
-    'dd' => 'tg://proxy?server=pl.gptru.pro&port=443&secret=dd20b1dfaf8512ed32a1048a55094b000e',
+    'flag' => '🇵🇱', 'name' => 'ПоСтранаьша', 'domain' => 'домен',
+    'ee' => 'tg://proxy?server=',
+    'dd' => 'tg://proxy?server=',
   ],
 ];
 $dcs = [
