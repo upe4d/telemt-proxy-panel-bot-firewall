@@ -2,17 +2,17 @@
 
 Полный стек для управления MTProxy сервером на базе [Telemt](https://github.com/telemt/telemt):
 
-- 📊 Веб-дашборд v2.0 — вкладочная навигация, тёмно-синяя гамма, 7 разделов
+- 📊 Веб-дашборд v2.0 — вкладочная навигация, тёмно-синяя гамма, 8 разделов
 - 🛡️ Защита от ТСПУ — TSPUBLOCK (CyberOK) + GOVIPS (госорганы РФ) с аналитикой
 - 🤖 Telegram бот с уведомлениями и отчётами
 - 🔒 GeoIP фильтрация с белым списком стран и IP
-- 🗺️ Карта активных пользователей в реальном времени
+- 🗺️ Карта активных пользователей в реальном времени, Радар DC
 
 ## Скриншоты
 
-> Обзор, Карта, Защита, Страны, Пользователи, История, Фильтрация
+> Обзор, Карта, Защита, Страны, Пользователи, История, Фильтрация, Радар DC
 
-<img width="3081" height="1436" alt="image" src="https://github.com/user-attachments/assets/c44c4824-399a-4882-9b87-c43451e40a1e" />
+<img width="2994" height="1968" alt="image" src="https://github.com/user-attachments/assets/5d03f2e2-7d71-479d-86b9-06869d7125af" />
 <img width="3093" height="1452" alt="image" src="https://github.com/user-attachments/assets/d4d4b4d7-f2f5-47b1-9261-eec3b50cbd75" />
 <img width="3055" height="1712" alt="image" src="https://github.com/user-attachments/assets/3fb47046-8215-4660-a2ea-0e741ddd892b" />
 <img width="3072" height="1761" alt="image" src="https://github.com/user-attachments/assets/d7e4f066-d7c6-4677-8399-86cf46fe1102" />
@@ -26,19 +26,22 @@
 
 ```
 telemt-proxy-panel-bot-firewall/
-├── index.php                  # Главная страница — шапка, навигация
+├── index.php                  # Главная страница — шапка, навигация, 8 вкладок
 ├── config.php                 # Настройки сайта и пути к файлам данных
+├── radar_proxy.php            # PHP прокси к radar.telemt.top (решает CORS)
+├── ping_proxy.php             # TCP пинг DC Telegram с сервера для диагностики
 ├── assets/
 │   ├── style.css              # Тёмно-синяя гамма, CSS переменные, кастомный скролл
 │   └── app.js                 # AJAX навигация по вкладкам без перезагрузки
 ├── tabs/
-│   ├── overview.php           # Обзор — метрики, мини-карта, защита, топ стран
+│   ├── overview.php           # Обзор — метрики, карта, защита, топ стран, ссылки
 │   ├── map.php                # Карта — полноэкранная с фильтром по странам
-│   ├── protection.php         # Защита — TSPUBLOCK + GOVIPS аналитика
+│   ├── protection.php         # Защита — TSPUBLOCK + GOVIPS аналитика, спарклайн
 │   ├── countries.php          # Страны — таблица, топ городов, трафик
 │   ├── users.php              # Пользователи — история IP, новые vs повторные
 │   ├── history.php            # История — графики по дням и часам
-│   └── whitelist.php          # Фильтрация — GeoIP белый список
+│   ├── whitelist.php          # Фильтрация — GeoIP белый список стран и IP
+│   └── radar.php              # Радар DC — статус DC, диагностика, прокси + QR
 ├── modules/
 │   └── whitelist.php          # Модуль управления белым списком
 └── bot/
@@ -310,6 +313,14 @@ iptables-save > /etc/iptables/rules.v4
 - Добавление персональных IP
 - Защита паролем
 
+### Радар DC
+- 📡 Статус всех DC Telegram в реальном времени (данные radar.telemt.top)
+- 🗺️ Матрица доступности TCP 443 по регионам SE/DE/RU
+- 🔬 Диагностика с сервера — TCP пинг до каждого DC с отображением задержки
+- 📱 Прокси ссылки для SE и PL с кнопками копирования, открытия в TG и QR попапом
+- 📖 Легенда DC — расположение и назначение каждого датацентра
+- 🔄 Обновление данных без перезагрузки страницы
+
 ## Telegram бот — команды
 
 | Команда | Описание |
@@ -347,8 +358,8 @@ MIT
 
 ## Автор
 
-[@upe4d](https://github.com/upe4d) — [t.me/u_pre](https://t.me/u_pre)  
-Канал поддержки: [t.me/telemtrs](https://t.me/telemtrs)
+Forum Telemtrs: [t.me/telemtrs](https://t.me/telemtrs)
+[@upe4d](https://github.com/upe4d) — [t.me/u_pre](https://t.me/u_pre) · [t.me/upe4d](https://t.me/upe4d)
 
 ## Связанные проекты
 
@@ -357,3 +368,4 @@ MIT
 - [telemt_panel](https://github.com/amirotin/telemt_panel) — официальная панель управления
 - [CyberOK_Skipa_ips](https://github.com/tread-lightly/CyberOK_Skipa_ips) — список сканеров ТСПУ
 - [C24Be/AS_Network_List](https://github.com/C24Be/AS_Network_List) — подсети госорганов РФ
+- [radar.telemt.top](https://radar.telemt.top) — мониторинг доступности DC Telegram из разных регионов (SE, DE, RU) по ICMP и TCP 443 в реальном времени
