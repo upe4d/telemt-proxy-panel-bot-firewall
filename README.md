@@ -91,7 +91,7 @@ cp -r bot/* /opt/telemt-bot/
 
 ```python
 TELEMT_API    = "http://127.0.0.1:9091"
-TELEMT_TOKEN  = "YOUR_BEARER_TOKEN"
+TELEMT_TOKEN  = ""  # токен не нужен если в telemt.toml нет auth_header
 SITE_DOMAIN   = "stats.yourdomain.com"
 INTERVAL      = 600   # секунд между сборами
 MAX_IPS       = 10000 # максимум IP в истории

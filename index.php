@@ -76,6 +76,9 @@ $version = $current['version'] ?? '—';
   <button class="tab-btn" data-tab="whitelist">
     <span class="tab-icon"><i class="bi bi-funnel"></i></span> Фильтрация
   </button>
+  <button class="tab-btn" data-tab="radar">
+    <span class="tab-icon"><i class="bi bi-reception-4"></i></span> Радар DC
+  </button>
 </div>
 
 <!-- КОНТЕНТ ВКЛАДОК -->
